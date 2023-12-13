@@ -9,8 +9,8 @@ int main()
     struct Tree* tree = (struct Tree*) calloc(1, sizeof(struct Tree));
     struct Labels* var_buf = (struct Labels*) calloc(NUM_VAR, sizeof(struct Labels));
     struct Remove* rems = (struct Remove*) calloc(MAX_NUM_REPLASES, sizeof(struct Remove));
-    var_buf[0].var = (char*) calloc(5, sizeof(char));
-    //strcpy(var_buf[0].var, "e");
+    var_buf[0].var = (char*) calloc(2, sizeof(char));
+
     Fill_Labels(var_buf);
 
     rems -> num_rems = 0;

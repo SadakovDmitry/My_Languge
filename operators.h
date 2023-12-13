@@ -1,0 +1,33 @@
+#define MAX(a, b) ((a) > (b) ? (a) : (b))
+
+//OP(name, str  ,num_op,math            ,"")
+  OP(ADD , "+"  , 0 ,   left+right      ,"+")
+  OP(SUB , "-"  , 1 ,   left-right      ,"-")
+  OP(MUL , "*"  , 2 ,   left*right      ,"*")
+  OP(DIV , "/"  , 3 ,   left/right      ,"/")
+  OP(SQRT, "√"  , 4 ,   sqrt(right)     ,"√")
+  OP(SIN , "sin", 5 ,   sin(right)      ,"sin")
+  OP(COS , "cos", 6 ,   cos(right)      ,"cos")
+  OP(TAN , "tg" , 7 ,   tan(right)      ,"tg")
+  OP(COT , "ctg", 8 ,   1/tan(right)    ,"ctg")
+  OP(POW , "^"  , 9 ,   pow(left, right),"^")
+  OP(LOG , "log", 10,   log(right)      ,"log")
+  OP(L_BRACKET,"(",12,  left            ,"(")
+  OP(R_BRACKET,")",11,  left            ,")")
+  OP(ZERO, "\0" , 13,   left            ,"\0")
+
+
+  OP(ASSIGN   , "="   , 14, left , "="     )
+  OP(EQAL     , "=="  , 15, left , "=="    )
+  OP(MORE     , ">"   , 16, left , "\\>"   )
+  OP(LESS     , "<"   , 17, left , "\\<"   )
+  OP(MORE_E   , ">="  , 18, left , "\\>="  )
+  OP(LESS_E   , "<="  , 19, left , "\\<="  )
+  OP(N_EQAL   , "!="  , 20, left , "!="    )
+  OP(WHILE    ,"while", 22, left , "while" )
+  OP(L_FIG_BR , "{"   , 23, left , "\\{"   )
+  OP(R_FIG_BR , "}"   , 24, left , "\\}"   )
+  OP(IF       , "if"  , 21, left , "if"    )
+  OP(DOT_SUP  , ";"   , 25, left , ";"     )
+
+
