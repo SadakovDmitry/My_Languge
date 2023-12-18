@@ -5,6 +5,34 @@
 //#include "/Users/dima/MIPT/Differintsator/work_with_file.h"
 
 
+// V  - Get_Variable
+// F  - Get_Functon
+// Op - Get_Operation
+// Cond - Get_Condition
+
+
+// G    ::= F+
+// F    ::= 'def' V '{'Op+'}' | Op
+// Op   ::= If | A | Wh                            '{' Op+ '}'
+// If   ::= 'if' '('Cond')' {'else' Op}? '{' Op+'}'
+// Wh   ::= 'while' '('Cond')' '{' Op+ '}'
+// A    ::= Id '=' Exp ';'
+// Cmp  ::= Exp ['<','>','<=','>='] Exp
+// Cond ::= Cmp { Cmp ['&&' , '||'] Cmp }*
+
+// Exp  ::= Term {['+', '-'] Term}*
+// Term ::= Pow  {['*', '/'] Pow}*
+// Pow  ::= UnOp {'^' UnOp}*
+// UnOp ::= {['sin', 'cos', 'tg', 'ctg', ...]}* PrExp
+// ...
+
+
+
+
+
+
+
+
 char* Read_file(FILE* file)
 {
     struct stat st = {};
@@ -72,24 +100,24 @@ struct Node* Get_Mul_Div   (struct Parse_inf* inf)
     enum TYPE node_type = (inf -> str_lex)[inf -> pos].type;
     Tree_t    node_val  = (inf -> str_lex)[inf -> pos].val;
 
-    while(node_type == OP && (node_val.op == DIV || node_val.op == MUL))
+    while(node_type == BIN_OP && (node_val.bin_op == DIV || node_val.bin_op == MUL))
     {
         (inf -> pos)++;
 
         struct Node* right = Get_Pow_Log(inf);
 
-        switch (node_val.op)
-        {
-        case DIV:
-        case MUL:
+        //switch (node_val.bin_op)
+        //{
+        //case DIV:
+        //case MUL:
             node -> left = left;
             node -> right = right;
 
             return node;
-        default:
-            printf(red(ERROR)"syntax error!!!");
-            exit(1);
-        }
+        //default:
+        //    printf(red(ERROR)"syntax error!!!");
+        //    exit(1);
+        //}
     }
 
     return left;
@@ -103,24 +131,24 @@ struct Node* Get_Plus_Minus(struct Parse_inf* inf)
     enum TYPE node_type = (inf -> str_lex)[inf -> pos].type;
     Tree_t    node_val  = (inf -> str_lex)[inf -> pos].val;
 
-    while(node_type == OP && (node_val.op == ADD || node_val.op == SUB))
+    while(node_type == BIN_OP && (node_val.bin_op == ADD || node_val.bin_op == SUB))
     {
         (inf -> pos)++;
 
         struct Node* right = Get_Mul_Div(inf);
 
-        switch(node_val.op)
-        {
-        case SUB:
-        case ADD:
+        //switch(node_val.op)
+        //{
+        //case SUB:
+        //case ADD:
             node -> left  = left;
             node -> right = right;
 
             return node;
-        default:
-            printf(red(ERROR)"syntax error!!!");
-            exit(1);
-        }
+        //default:
+        //    printf(red(ERROR)"syntax error!!!");
+        //    exit(1);
+        //}
     }
 
     return left;
@@ -132,12 +160,12 @@ struct Node* Get_Bracket   (struct Parse_inf* inf)
     enum TYPE node_type = (inf -> str_lex)[inf -> pos].type;
     Tree_t node_val     = (inf -> str_lex)[inf -> pos].val;
 
-    if(node_type == OP && node_val.op == L_BRACKET)
+    if(node_type == PUNCT && node_val.punct == L_BRACKET)
     {
         (inf -> pos)++;
         node = Get_Plus_Minus(inf);
 
-        assert((inf -> str_lex)[inf -> pos].type == OP && (inf -> str_lex)[inf -> pos].val.op == R_BRACKET);
+        assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == R_BRACKET);
         (inf -> pos)++;
 
         return node;
@@ -164,23 +192,21 @@ struct Node* Get_Unary_Op  (struct Parse_inf* inf)
     enum TYPE node_type = (inf -> str_lex)[inf -> pos].type;
     Tree_t    node_val  = (inf -> str_lex)[inf -> pos].val;
 
-    if(node_type == OP)
+    if(node_type == UN_OP)
     {
-        switch(node_val.op)
+        switch(node_val.un_op)
         {
         case SIN:
         case COS:
-        case TAN:
-        case COT:
         case SQRT:
             (inf -> pos)++;
 
-            assert((inf -> str_lex)[inf -> pos].type == OP && (inf -> str_lex)[inf -> pos].val.op == L_BRACKET);
+            assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == L_BRACKET);
             (inf -> pos)++;
 
             node -> right = Get_Plus_Minus(inf);
 
-            assert((inf -> str_lex)[inf -> pos].type == OP && (inf -> str_lex)[inf -> pos].val.op == R_BRACKET);
+            assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == R_BRACKET);
             (inf -> pos)++;
 
             return node;
@@ -200,12 +226,13 @@ struct Node* Get_Pow_Log   (struct Parse_inf* inf)
     enum TYPE node_type = (inf -> str_lex)[inf -> pos].type;
     Tree_t    node_val  = (inf -> str_lex)[inf -> pos].val;
 
-    if(node_type == OP)
+    if(node_type == BIN_OP)
     {
-        switch(node_val.op)
+        #warning my_warning wrong type
+        switch(node_val.bin_op)
         {
         case POW:
-        case LOG:
+        //case LN:
             (inf -> pos)++;
 
             node -> right = Get_Unary_Op(inf);
@@ -236,16 +263,16 @@ struct Node* Get_Id        (struct Parse_inf* inf)
     enum TYPE node_type = (inf -> str_lex)[inf -> pos].type;
     Tree_t    node_val  = (inf -> str_lex)[inf -> pos].val;
 
-    if(node_type == OP && node_val.op == ASSIGN)
+    if(node_type == BIN_OP && node_val.bin_op == ASSIGN)
     {
         (inf -> pos)++;
 
-        node -> right = Get_Plus_Minus(inf);
+        node -> left = Get_Plus_Minus(inf);
 
-        assert((inf -> str_lex)[inf -> pos].type == OP && (inf -> str_lex)[inf -> pos].val.op == DOT_SUP);
+        assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == DOT_SUP);
         (inf -> pos)++;
 
-        node -> left  = left;
+        node -> right  = left;
 
         return node;
     }
@@ -264,9 +291,9 @@ struct Node* Get_Cmp       (struct Parse_inf* inf)
     enum TYPE node_type = (inf -> str_lex)[inf -> pos].type;
     Tree_t    node_val  = (inf -> str_lex)[inf -> pos].val;
 
-    if(node_type == OP)
+    if(node_type == BIN_OP)
     {
-        switch(node_val.op)
+        switch(node_val.bin_op)
         {
         case LESS:
         case MORE:
@@ -277,7 +304,7 @@ struct Node* Get_Cmp       (struct Parse_inf* inf)
             (inf -> pos)++;
 
             node -> right = Get_Plus_Minus(inf);
-            node -> left = left;
+            node -> left  = left;
 
             return node;
         default:
@@ -287,6 +314,31 @@ struct Node* Get_Cmp       (struct Parse_inf* inf)
     //printf("huy2: node_val = %d\n", node_val.op);
 
     return Get_Id(inf);
+    //return left;
+}
+
+// Cond ::= Cmp {['&&' , '||'] Cmp }*
+struct Node* Get_Cond      (struct Parse_inf* inf)
+{
+    struct Node* left = Get_Cmp(inf);
+    struct Node* node = &(inf -> str_lex)[inf -> pos];
+
+    enum TYPE node_type = (inf -> str_lex)[inf -> pos].type;
+    Tree_t    node_val  = (inf -> str_lex)[inf -> pos].val;
+
+    while(node_type == BIN_OP && (node_val.bin_op == OR || node_val.bin_op == AND))
+    {
+        (inf -> pos)++;
+
+        struct Node* right = Get_Cmp(inf);
+
+        node -> left  = left;
+        node -> right = right;
+
+        return node;
+    }
+
+    return left;
 }
 
 struct Node* Get_If        (struct Parse_inf* inf)
@@ -296,25 +348,31 @@ struct Node* Get_If        (struct Parse_inf* inf)
     enum TYPE node_type = (inf -> str_lex)[inf -> pos].type;
     Tree_t    node_val  = (inf -> str_lex)[inf -> pos].val;
 
-    if(node_type == OP && node_val.op == IF)
+    if(node_type == KEY_OP && node_val.key_op == IF)
     {
         printf("create if\n");
         (inf -> pos)++;
 
-        assert((inf -> str_lex)[inf -> pos].type == OP && (inf -> str_lex)[inf -> pos].val.op == L_BRACKET);
+        assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == L_BRACKET);
         (inf -> pos)++;
 
-        node -> left  = Get_Cmp(inf);
+        node -> left  = Get_Cond(inf);
 
-        assert((inf -> str_lex)[inf -> pos].type == OP && (inf -> str_lex)[inf -> pos].val.op == R_BRACKET);
+        assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == R_BRACKET);
         (inf -> pos)++;
 
-        assert((inf -> str_lex)[inf -> pos].type == OP && (inf -> str_lex)[inf -> pos].val.op == L_FIG_BR);
+        assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == L_FIG_BR);
         (inf -> pos)++;
 
-        node -> right = Get_Op(inf);
+        node_type = (inf -> str_lex)[inf -> pos].type;
+        node_val  = (inf -> str_lex)[inf -> pos].val;
 
-        assert((inf -> str_lex)[inf -> pos].type == OP && (inf -> str_lex)[inf -> pos].val.op == R_FIG_BR);
+        //while(node_type == KEY_OP || node_type == BIN_OP || node -> type == UN_OP)
+        //{
+            node -> right = Get_Op(inf);
+        //}
+
+        assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == R_FIG_BR);
         (inf -> pos)++;
 
         return node;
@@ -331,24 +389,24 @@ struct Node* Get_While      (struct Parse_inf* inf)
     enum TYPE node_type = (inf -> str_lex)[inf -> pos].type;
     Tree_t    node_val  = (inf -> str_lex)[inf -> pos].val;
 
-    if(node_type == OP && node_val.op == WHILE)
+    if(node_type == KEY_OP && node_val.key_op == WHILE)
     {
         (inf -> pos)++;
 
-        assert((inf -> str_lex)[inf -> pos].type == OP && (inf -> str_lex)[inf -> pos].val.op == L_BRACKET);
+        assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == L_BRACKET);
         (inf -> pos)++;
 
-        node -> left  = Get_Cmp(inf);
+        node -> left  = Get_Cond(inf);
 
-        assert((inf -> str_lex)[inf -> pos].type == OP && (inf -> str_lex)[inf -> pos].val.op == R_BRACKET);
+        assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == R_BRACKET);
         (inf -> pos)++;
 
-        assert((inf -> str_lex)[inf -> pos].type == OP && (inf -> str_lex)[inf -> pos].val.op == L_FIG_BR);
+        assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == L_FIG_BR);
         (inf -> pos)++;
 
         node -> right = Get_Op(inf);
 
-        assert((inf -> str_lex)[inf -> pos].type == OP && (inf -> str_lex)[inf -> pos].val.op == R_FIG_BR);
+        assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == R_FIG_BR);
         (inf -> pos)++;
 
         return node;
@@ -360,7 +418,7 @@ struct Node* Get_While      (struct Parse_inf* inf)
 
 struct Node* Get_Op        (struct Parse_inf* inf)
 {
-    struct Node* node = &(inf -> str_lex)[inf -> pos];
+    //struct Node* node = &(inf -> str_lex)[inf -> pos];
 
     //assert((inf -> str_lex)[inf -> pos].type == OP && (inf -> str_lex)[inf -> pos].val.op == L_FIG_BR);
     //(inf -> pos)++;
@@ -368,25 +426,49 @@ struct Node* Get_Op        (struct Parse_inf* inf)
     enum TYPE node_type = (inf -> str_lex)[inf -> pos].type;
     Tree_t    node_val  = (inf -> str_lex)[inf -> pos].val;
 
-    while(node_type == OP)
+    if (node_type == KEY_OP /*|| node_type == BIN_OP*/)
     {
-
-        switch(node_val.op)
+        switch(node_val.key_op)
         {
-        case ASSIGN:
-            printf("read assign\n");
-            return Get_Id(inf);
+        //case ASSIGN:
+            //printf("read assign\n");
+            //return Get_Id(inf);
         case WHILE:
             printf("read while\n");
             return Get_While(inf);
         case IF:
             printf("read if\n");
             return Get_If(inf);
+        //case L_FIG_BR:
+        //    node =  Get_Op(inf);
+
+        //    assert((inf -> str_lex)[inf -> pos].type == OP && (inf -> str_lex)[inf -> pos].val.op == L_FIG_BR);
+        //    (inf -> pos)++;
+
+        //    return node;
         default:
             printf(red(ERROR)"\n");
             return Get_Id(inf);
         }
 
+    }
+    if (node_type == VAR)
+    {
+        if((inf -> str_lex)[inf -> pos + 1].type == BIN_OP && (inf -> str_lex)[inf -> pos + 1].val.bin_op == ASSIGN)
+        {
+            return Get_Id(inf);
+        }
+        /*
+        switch(node_val.bin_op)
+        {
+        case ASSIGN:
+            printf("read bin assign\n");
+            return Get_Id(inf);
+        default:
+            printf(red(ERROR)"\n");
+            return Get_Id(inf);
+        }
+        */
     }
 
     return Get_Id(inf);
@@ -400,7 +482,7 @@ struct Node* Get_Dot_Sup      (struct Parse_inf* inf)
     enum TYPE node_type = (inf -> str_lex)[inf -> pos].type;
     Tree_t    node_val  = (inf -> str_lex)[inf -> pos].val;
 
-    if(node_type == OP && node_val.op == DOT_SUP)
+    if(node_type == PUNCT && node_val.punct == DOT_SUP)
     {
         (inf -> pos)++;
 
@@ -411,13 +493,19 @@ struct Node* Get_Dot_Sup      (struct Parse_inf* inf)
     }
     //printf("huy4: node_val = %d\n", node_val.op);
     //printf(red(WRONG_OP) "\n");
-
     exit(1);
 
     return node;
 }
+/*
+struct Ndoe* Get_Main(struct Parse_inf* inf)
+{
+    enum TYPE node_type = (inf -> str_lex)[inf -> pos].type;
+    Tree_t    node_val  = (inf -> str_lex)[inf -> pos].val;
 
-
+    while (node_type == OP && node_val = def)
+}
+*/
 
 
 
@@ -429,7 +517,6 @@ struct Node* Sintactic_Pars(struct Tree* tree, char* buf, int size_of_file)
     int node_buf_pos = 0;
     int buf_pos = 0;
 
-    //while(buf[buf_pos] != '\n')
     while(buf_pos < size_of_file)
     {
         buf_pos = Set_Lex_Val(tree, &node_buf[node_buf_pos], buf, buf_pos, &node_buf_pos);
@@ -465,28 +552,44 @@ int Det_Lex_Val(struct Tree* tree, struct Node* node, char* buf, int pos_buf)
     {
         char* str = &buf[pos_buf];
 
-        while(isalpha(buf[pos_buf]) || (buf[pos_buf] >= ':' && buf[pos_buf] <= '>') || buf[pos_buf] == '!' || buf[pos_buf] == ';')
+        while(isalnum(buf[pos_buf]) ||
+                     (buf[pos_buf] >= ':' && buf[pos_buf] <= '>') ||
+                      buf[pos_buf] == '!' ||
+                      buf[pos_buf] == ';' ||
+                      buf[pos_buf] == '&' ||
+                      buf[pos_buf] == '|')
+        //while(buf[pos_buf] != ' ')
         {
             //printf("%c\n", buf[pos_buf]);
             pos_buf++;
         }
-        printf("\n");
+        //printf("\n");
+
         char* new_str = (char*) calloc((&buf[pos_buf] - str + 1), sizeof(char));
         memcpy(new_str, str, (&buf[pos_buf] - str));
 
-        if(Check_Type(new_str) == OP)
+        enum TYPE type = Check_Type(new_str);
+
+        if(type == BIN_OP || type == UN_OP || type == KEY_OP)
         {
-            enum OPERATION op = Convert_op_to_enum(node, new_str);
-            node -> type = OP;
-            (node -> val).op = op;
+            int id = Convert_op_to_enum(node, new_str);
+            node -> type = type;
+            (node -> val).var_id = id;
             printf("read operation : %s\n", new_str);
+        }
+        else if(type == PUNCT)
+        {
+            int id = Convert_op_to_enum(node, new_str);
+            node -> type = type;
+            (node -> val).var_id = id;
+            printf("read punctuation : %s\n", new_str);
         }
         else
         {
             node -> type = VAR;
             (node -> val).var_id = Add_Variable(tree, tree -> var_buf, new_str);
             node -> right = NULL;
-            node -> left = NULL;
+            node -> left  = NULL;
 
             printf("read variable : %s\n", new_str);
         }
@@ -517,58 +620,58 @@ int Set_Lex_Val(struct Tree* tree, struct Node* node, char* buf, int pos_buf, in
         (*node_buf_pos)--;
         break;
     case '+':
-        node -> type = OP;
-        (node -> val).op = ADD;
+        node -> type = BIN_OP;
+        (node -> val).bin_op = ADD;
         printf("read op : %c\n", buf[pos_buf]);
         break;
     case '-':
-        node -> type = OP;
-        (node -> val).op = SUB;
+        node -> type = BIN_OP;
+        (node -> val).bin_op = SUB;
         printf("read op : %c\n", buf[pos_buf]);
         break;
     case '*':
-        node -> type = OP;
-        (node -> val).op = MUL;
+        node -> type = BIN_OP;
+        (node -> val).bin_op = MUL;
         printf("read op : %c\n", buf[pos_buf]);
         break;
     case '^':
-        node -> type = OP;
-        (node -> val).op = POW;
+        node -> type = BIN_OP;
+        (node -> val).bin_op = POW;
         printf("read op : %c\n", buf[pos_buf]);
         break;
     case '/':
-        node -> type = OP;
-        (node -> val).op = DIV;
+        node -> type = BIN_OP;
+        (node -> val).bin_op = DIV;
         printf("read op : %c\n", buf[pos_buf]);
         break;
     case '(':
-        node -> type = OP;
-        (node -> val).op = L_BRACKET;
+        node -> type = PUNCT;
+        (node -> val).punct = L_BRACKET;
         printf("read op : %c\n", buf[pos_buf]);
         break;
     case ')':
-        node -> type = OP;
-        (node -> val).op = R_BRACKET;
+        node -> type = PUNCT;
+        (node -> val).punct = R_BRACKET;
         printf("read op : %c\n", buf[pos_buf]);
         break;
     case '{':
-        node -> type = OP;
-        (node -> val).op = L_FIG_BR;
+        node -> type = PUNCT;
+        (node -> val).punct = L_FIG_BR;
         printf("read op : %c\n", buf[pos_buf]);
         break;
     case '}':
-        node -> type = OP;
-        (node -> val).op = R_FIG_BR;
+        node -> type = PUNCT;
+        (node -> val).punct = R_FIG_BR;
         printf("read op : %c\n", buf[pos_buf]);
         break;
     case '\0':
-        node -> type = OP;
-        (node -> val).op = ZERO;
+        node -> type = PUNCT;
+        (node -> val).punct = ZERO;
         printf("read op : %c\n", buf[pos_buf]);
         break;
     case ';':
-        node -> type = OP;
-        (node -> val).op = DOT_SUP;
+        node -> type = PUNCT;
+        (node -> val).punct = DOT_SUP;
         printf("read op : %c\n", buf[pos_buf]);
         break;
     default:
@@ -622,9 +725,17 @@ void Print_Lex_Str(struct Node* node)
     printf("\n\n");
     for(int i = 0; i < 9; i++)
     {
-        if(node[i].type == OP)
+        if(node[i].type == BIN_OP)
         {
-            printf("OP:%d\n", node[i].val.op);
+            printf("BIN_OP:%d\n", node[i].val.bin_op);
+        }
+        if(node[i].type == UN_OP)
+        {
+            printf("UN_OP:%d\n", node[i].val.un_op);
+        }
+        if(node[i].type == KEY_OP)
+        {
+            printf("KEY_OP:%d\n", node[i].val.key_op);
         }
         if(node[i].type == VAR)
         {
@@ -637,7 +748,7 @@ void Print_Lex_Str(struct Node* node)
     }
 }
 
-void Print_Node(struct Node* node)
+void Print_Node(struct Tree* tree, struct Node* node)
 {
     printf("\n");
     if(node == NULL)
@@ -645,23 +756,52 @@ void Print_Node(struct Node* node)
         printf("NULL\n");
         return;
     }
-    if(node -> type == OP)
+    if(node -> type == UN_OP)
     {
-        printf("OP:%d\n", (node -> val).op);
-        printf("R:%p\n",   node -> right);
-        printf("L:%p\n",   node -> left);
+        printf("UN_OP:%s\n", (tree -> var_buf)[(node -> val).un_op].name);
+        //printf("R:%p\n",   node -> right);
+        //printf("L:%p\n",   node -> left);
+    }
+    if(node -> type == KEY_OP)
+    {
+        printf("KEY_OP:%s\n", (tree -> var_buf)[(node -> val).key_op].name);
+        //printf("R:%p\n",   node -> right);
+        //printf("L:%p\n",   node -> left);
+    }
+    if(node -> type == BIN_OP)
+    {
+        printf("BIN_OP:%s\n", (tree -> var_buf)[(node -> val).bin_op].name);
+        //printf("R:%p\n",   node -> right);
+        //printf("L:%p\n",   node -> left);
+    }
+    if(node -> type == PUNCT)
+    {
+        printf("PUNCT:%s\n", (tree -> var_buf)[(node -> val).punct].name);
+        //printf("PUNCT:%d\n", (node -> val).punct);
+        //printf("R:%p\n",   node -> right);
+        //printf("L:%p\n",   node -> left);
     }
     if(node -> type == VAR)
     {
-        printf("VAR:%d\n", node -> val.var_id);
-        printf("R:%p\n",   node -> right);
-        printf("L:%p\n",   node -> left);
+        printf("VAR:%s\n",(tree -> var_buf)[(node -> val).var_id].name);
+        //printf("R:%p\n",   node -> right);
+        //printf("L:%p\n",   node -> left);
     }
     if(node -> type == NUM)
     {
-        printf("NUM:%lf\n", node -> val.num);
-        printf("R:%p\n",    node -> right);
-        printf("L:%p\n",    node -> left);
+        printf("NUM:%lg\n", node -> val.num);
+        //printf("R:%p\n",    node -> right);
+        //printf("L:%p\n",    node -> left);
     }
-    printf("\n\n");
+    //printf("\n\n");
+}
+
+void Print_Lexems(struct Tree* tree, struct Node* node_buf, int file_size)
+{
+    printf(green(--------------------LEXEMS--------------------\n));
+    for(int i = 0; i < file_size - 100 /*/ (sizeof(struct Labels))*/; i++)
+    {
+        Print_Node(tree, &(node_buf[i]));
+    }
+    printf(green(----------------------------------------------\n));
 }
