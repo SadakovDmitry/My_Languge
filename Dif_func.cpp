@@ -6,10 +6,10 @@
 
 void Fill_Labels(struct Labels* labels)
 {
-    labels[0].var = "e";
+    labels[0].name = "e";
     labels[0].type = VAR;
     labels[0].val = 2.7;
-
+    /*
     labels[1].var = "if";
     labels[1].type = KWD;
     labels[1].val = 0;
@@ -17,6 +17,7 @@ void Fill_Labels(struct Labels* labels)
     labels[2].var = "while";
     labels[2].type = KWD;
     labels[2].val = 0;
+    */
 }
 
 //                                                    Delete
@@ -85,7 +86,8 @@ int Check_Operation(struct Node* node)
 
     switch(node -> type)
     {
-    case OP:
+    case BIN_OP:
+    case UN_OP:
         if(node -> right == NULL)
         {
             fprintf(stderr, red(ERROR)"right == NULL after OP node");
@@ -152,7 +154,7 @@ void Input_variable(struct Tree* tree)
 
     for (int i = 0; i < tree -> num_var; i++)
     {
-        printf("\nPrint value of " green(%s)" !\n", (tree -> var_buf)[i].var);
+        printf("\nPrint value of " green(%s)" !\n", (tree -> var_buf)[i].name);
         scanf("%lf", &value);
 
         (tree -> var_buf)[i].val = value;
@@ -173,9 +175,17 @@ struct Node* Copy_Subtree(struct Node* node)
 
     struct Node* new_node = (struct Node*) calloc(1, sizeof(struct Node));
 
-    if (node -> type == OP)
+    if (node -> type == BIN_OP)
     {
-        (new_node -> val).op = (node -> val).op;
+        (new_node -> val).bin_op = (node -> val).bin_op;
+    }
+    else if (node -> type == UN_OP)
+    {
+        (new_node -> val).un_op = (node -> val).un_op;
+    }
+    else if (node -> type == KEY_OP)
+    {
+        (new_node -> val).key_op = (node -> val).key_op;
     }
     else if (node -> type == NUM)
     {
@@ -208,11 +218,17 @@ struct Node* Copy_Node(struct Node* sourse_node, struct Node* dest_node)
 {
     switch(sourse_node -> type)
     {
-    case OP:
-        (dest_node -> val).op = (sourse_node -> val).op;
+    case BIN_OP:
+        (dest_node -> val).bin_op = (sourse_node -> val).bin_op;
+        break;
+    case UN_OP:
+        (dest_node -> val).un_op  = (sourse_node -> val).un_op;
+        break;
+    case KEY_OP:
+        (dest_node -> val).key_op = (sourse_node -> val).key_op;
         break;
     case NUM:
-        (dest_node -> val).num = (sourse_node -> val).num;
+        (dest_node -> val).num    = (sourse_node -> val).num;
         break;
     case VAR:
         (dest_node -> val).var_id = (sourse_node -> val).var_id;
@@ -222,11 +238,11 @@ struct Node* Copy_Node(struct Node* sourse_node, struct Node* dest_node)
         exit(1);
     }
 
-    dest_node -> left = sourse_node -> left;
-    dest_node -> right = sourse_node -> right;
-    dest_node -> type = sourse_node -> type;
+    dest_node -> left     = sourse_node -> left;
+    dest_node -> right    = sourse_node -> right;
+    dest_node -> type     = sourse_node -> type;
     dest_node -> priority = sourse_node -> priority;
-    dest_node -> size = sourse_node -> size;
+    dest_node -> size     = sourse_node -> size;
 
     return dest_node;
 }
@@ -250,15 +266,37 @@ double Calculate_val(struct Node* node)
     case name:                                                           \
         return calculate;
     //---------------------------------------------------------------
-
-    switch((node -> val).op)
+    if(node -> type == KEY_OP)
     {
+        switch((node -> val).key_op)
+        {
+        #include "key_operators.h"
+        default:
+            fprintf(stderr, "\n" red(ERROR) " no operation!!!");
+            exit(1);
+        }
+    }
 
-    #include "operators.h"
+    if(node -> type == BIN_OP)
+    {
+        switch((node -> val).bin_op)
+        {
+        #include "bin_operators.h"
+        default:
+            fprintf(stderr, "\n" red(ERROR) " no operation!!!");
+            exit(1);
+        }
+    }
 
-    default:
-        fprintf(stderr, "\n" red(ERROR) " no operation!!!");
-        exit(1);
+    if(node -> type == UN_OP)
+    {
+        switch((node -> val).un_op)
+        {
+        #include "un_operations.h"
+        default:
+            fprintf(stderr, "\n" red(ERROR) " no operation!!!");
+            exit(1);
+        }
     }
     #undef OP
 }
@@ -400,9 +438,9 @@ int Reduce_Node(struct Tree* tree, struct Node* node)
             }
         }
 
-        if(node -> type == OP)
+        if(node -> type == BIN_OP)
         {
-            switch((node -> val).op)
+            switch((node -> val).bin_op)
             {
             case MUL:
                 if (Reduce_MUL(tree, node)) return 1;

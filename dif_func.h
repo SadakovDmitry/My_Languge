@@ -4,8 +4,10 @@
 #include "lib.h"
 
 #define tree_t "%s"
-#define red(str) "\033[31m"#str"\033[0m"
-#define green(str) "\033[32m"#str"\033[0m"
+#define red(str)    "\033[31m"#str"\033[0m"
+#define green(str)  "\033[32m"#str"\033[0m"
+#define yellow(str) "\033[33m"#str"\033[0m"
+
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 
 #define L               node->left
