@@ -88,6 +88,7 @@ struct Node* Get_Var   (struct Parse_inf* inf)
     }
 
     printf(red(somthing wrong read unknown type)"\n");
+    exit(1);
 
     return NULL;
 }
@@ -344,6 +345,9 @@ struct Node* Get_Cond      (struct Parse_inf* inf)
 struct Node* Get_If        (struct Parse_inf* inf)
 {
     struct Node* node = &(inf -> str_lex)[inf -> pos];
+    struct Node* else_node = NULL;
+    //#warning normal create node please
+    //struct Tree* tree = (struct Tree*) calloc(1, sizeof(struct Tree));
 
     enum TYPE node_type = (inf -> str_lex)[inf -> pos].type;
     Tree_t    node_val  = (inf -> str_lex)[inf -> pos].val;
@@ -364,13 +368,35 @@ struct Node* Get_If        (struct Parse_inf* inf)
         assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == L_FIG_BR);
         (inf -> pos)++;
 
-        node_type = (inf -> str_lex)[inf -> pos].type;
-        node_val  = (inf -> str_lex)[inf -> pos].val;
+        //node_type = (inf -> str_lex)[inf -> pos].type;
+        //node_val  = (inf -> str_lex)[inf -> pos].val;
 
-        //while(node_type == KEY_OP || node_type == BIN_OP || node -> type == UN_OP)
-        //{
+        //enum TYPE node_type_next = (inf -> str_lex)[inf -> pos + 1].type;
+        //Tree_t    node_val_next  = (inf -> str_lex)[inf -> pos + 1].val;
+
+        while((inf -> str_lex)[inf -> pos].type == KEY_OP || (inf -> str_lex)[inf -> pos].type == BIN_OP ||
+             ((inf -> str_lex)[inf -> pos].type == VAR && (inf -> str_lex)[inf -> pos + 1].type == BIN_OP))
+        {
+            //#warning normal create node please
+            //struct Tree* tree = (struct Tree*) calloc(1, sizeof(struct Tree));
+
             node -> right = Get_Op(inf);
-        //}
+
+            //node = Create_Node(PUNCT, {.punct = DOT_SUP}, node, Get_Op(inf), tree);
+        }
+
+
+        if((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == L_FIG_BR)
+        {
+            (inf -> pos)++;
+
+            else_node = Get_Op(inf);
+
+            assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == R_FIG_BR);
+            (inf -> pos)++;
+        }
+
+        node -> right = Create_Node(PUNCT, {.punct = DOT_SUP}, node -> right, else_node, NULL);
 
         assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == R_FIG_BR);
         (inf -> pos)++;
@@ -380,6 +406,7 @@ struct Node* Get_If        (struct Parse_inf* inf)
     //printf("huy: node_val = %d\n", node_val.op);
 
     return Get_Op(inf);
+    //return NULL;
 }
 
 struct Node* Get_While      (struct Parse_inf* inf)
@@ -391,6 +418,7 @@ struct Node* Get_While      (struct Parse_inf* inf)
 
     if(node_type == KEY_OP && node_val.key_op == WHILE)
     {
+        printf("create while\n");
         (inf -> pos)++;
 
         assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == L_BRACKET);
@@ -404,8 +432,29 @@ struct Node* Get_While      (struct Parse_inf* inf)
         assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == L_FIG_BR);
         (inf -> pos)++;
 
-        node -> right = Get_Op(inf);
+        //node_type = (inf -> str_lex)[inf -> pos].type;
+        //node_val  = (inf -> str_lex)[inf -> pos].val;
 
+        //enum TYPE node_type_next = (inf -> str_lex)[inf -> pos + 1].type;
+
+        //printf(green(now_node_type  = ) " %d\n", (inf -> str_lex)[inf -> pos].type);
+        //printf(green(next_node_type = ) " %d\n\n", (inf -> str_lex)[inf -> pos + 1].type);
+
+        while((inf -> str_lex)[inf -> pos].type == KEY_OP || (inf -> str_lex)[inf -> pos].type == BIN_OP ||
+             ((inf -> str_lex)[inf -> pos].type == VAR && (inf -> str_lex)[inf -> pos + 1].type == BIN_OP))
+        {
+            //printf(red(now_node_type  = ) " %d\n", (inf -> str_lex)[inf -> pos].type);
+            //printf(red(next_node_type = ) " %d\n", (inf -> str_lex)[inf -> pos + 1].type);
+            //printf(yellow(i start get_op) "\n\n");
+            //#warning normal create node please
+            //struct Tree* tree = (struct Tree*) calloc(1, sizeof(struct Tree));
+
+            node -> right = Get_Op(inf);
+
+            //node = Create_Node(PUNCT, {.punct = DOT_SUP}, node, Get_Op(inf), tree);
+        }
+
+        printf(green(now_read =) " %d\n",(inf -> str_lex)[inf -> pos].val.punct);
         assert((inf -> str_lex)[inf -> pos].type == PUNCT && (inf -> str_lex)[inf -> pos].val.punct == R_FIG_BR);
         (inf -> pos)++;
 
@@ -414,6 +463,7 @@ struct Node* Get_While      (struct Parse_inf* inf)
     //printf("huy: do if node_val = %d\n", node_val.op);
 
     return Get_Op(inf);
+    //return NULL;
 }
 
 struct Node* Get_Op        (struct Parse_inf* inf)
@@ -448,7 +498,8 @@ struct Node* Get_Op        (struct Parse_inf* inf)
         //    return node;
         default:
             printf(red(ERROR)"\n");
-            return Get_Id(inf);
+            //return Get_Id(inf);
+            return NULL;
         }
 
     }
@@ -471,7 +522,8 @@ struct Node* Get_Op        (struct Parse_inf* inf)
         */
     }
 
-    return Get_Id(inf);
+    //return Get_Id(inf);
+    return NULL;
 }
 
 struct Node* Get_Dot_Sup      (struct Parse_inf* inf)
@@ -676,7 +728,6 @@ int Set_Lex_Val(struct Tree* tree, struct Node* node, char* buf, int pos_buf, in
         break;
     default:
         pos_buf = Det_Lex_Val(tree, node, buf, pos_buf);
-
     }
 
     pos_buf++;
@@ -799,7 +850,7 @@ void Print_Node(struct Tree* tree, struct Node* node)
 void Print_Lexems(struct Tree* tree, struct Node* node_buf, int file_size)
 {
     printf(green(--------------------LEXEMS--------------------\n));
-    for(int i = 0; i < file_size - 100 /*/ (sizeof(struct Labels))*/; i++)
+    for(int i = 0; i < file_size - 160 /*/ (sizeof(struct Labels))*/; i++)
     {
         Print_Node(tree, &(node_buf[i]));
     }
