@@ -3,8 +3,13 @@
 
 #include "dif_func.h"
 
-#define red(str) "\033[31m"#str"\033[0m"
+#define red(str)   "\033[31m"#str"\033[0m"
 #define green(str) "\033[32m"#str"\033[0m"
+
+#define NODE_TYPE      (inf -> str_lex)[inf -> pos].type
+#define NODE_VAL       (inf -> str_lex)[inf -> pos].val
+#define NEXT_NODE_TYPE (inf -> str_lex)[inf -> pos + 1].type
+#define NEXT_NODE_VAL  (inf -> str_lex)[inf -> pos + 1].val
 
 #include "lib.h"
 
@@ -13,6 +18,16 @@ struct Parse_inf
     struct Node* str_lex;
     int pos;
 };
+
+struct Lexer_inf
+{
+    struct Node* node_buf;
+    char* buf;
+    int node_buf_pos;
+    int buf_pos;
+};
+
+struct
 
 
 char*  Read_file (FILE* file);
@@ -32,6 +47,7 @@ struct Node* Get_If        (struct Parse_inf* inf);
 struct Node* Get_While     (struct Parse_inf* inf);
 struct Node* Get_Op        (struct Parse_inf* inf);
 struct Node* Get_Dot_Sup   (struct Parse_inf* inf);
+struct Node* Get_Body      (struct Parse_inf* inf);
 
 struct Node* Create_Tree(struct Parse_inf* inf);
 
