@@ -22,6 +22,6 @@ const char* PHRASE_TEX[SIZE_PHRASE_BANK] =
 };
 
 
-char* replaces[] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+const char* const replaces[] = {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
 #endif

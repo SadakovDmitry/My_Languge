@@ -4,25 +4,32 @@
 #include "parse_func.h"
 //#include "labels.h"
 
-
-int main()
+int main(const int argc, const char* argv[])
 {
-    struct Tree* tree = (struct Tree*) calloc(1, sizeof(struct Tree));
-    //struct Labels* var_buf = (struct Labels*) calloc(NUM_VAR, sizeof(struct Labels));
-    //struct Remove* rems = (struct Remove*) calloc(MAX_NUM_REPLASES, sizeof(struct Remove));
-    //var_buf[0].name = (char*) calloc(2, sizeof(char));
-    //var_buf = Names_Table_Ctor();
-    //Fill_Labels(var_buf);
+    if (argc < 1)
+    {
+        printf("\033[31mERROR\033[0m of argc %d\n", argc);
 
-    //rems -> num_rems = 0;
-    //tree -> var_buf = var_buf;
+        return 1;
+    }
+
+    struct Tree* tree = (struct Tree*) calloc(1, sizeof(struct Tree));
     tree -> num_var = NUM_OF_KWD;
     tree -> version = 0;
 
-    //printf("var_buf[0] = %s = %lg\n", var_buf[0].var, var_buf[0].val);
-    Read_tree_file(tree);
+    FILE* file = fopen(argv[1], "r");
+    Read_tree_file(tree, file);
+    fclose(file);
 
     Draw_Graph(tree);
+
+    file = fopen("Text_Tree.txt", "w");
+    Print_Pre_Order(tree, tree -> root, file);
+    fclose(file);
+
+    file = fopen("Names_Table.txt", "w");
+    Print_Name_Table_to_file(tree, file);
+    fclose(file);
 
     system("make draw");
 

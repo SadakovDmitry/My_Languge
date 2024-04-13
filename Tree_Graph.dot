@@ -1,0 +1,87 @@
+digraph G
+{
+	rankdir = "TB";
+
+	node[color = "red", style="filled, rounded", fontsize = 14];
+	edge[color = "black", fontcolor = "blue", fontsize = 12, weight = 0];
+
+	Tree [shape = record, style = "rounded", label = "root: 0x61d0000000a8 | size: 0"];
+	107545981092168 [color = "red", shape = record, style = "rounded", label = "{ \in  | UN_OP | { <left> left | <right> right }}"];
+	107545981092208 [color = "grey", shape = record, style = "rounded", label = "{ a | VAR |{ <left> left | <right> right }}"];
+	105827994174416 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	107545981092248 [color = "red", shape = record, style = "rounded", label = "{ \call  | UN_OP | { <left> left | <right> right }}"];
+	107545981092288 [color = "red", shape = record, style = "rounded", label = "{ Fact  | FUNC | { <left> left | <right> right }}"];
+	105827994174544 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	107545981092368 [color = "grey", shape = record, style = "rounded", label = "{ a | VAR |{ <left> left | <right> right }}"];
+	105827994174480 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	105827994174608 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	107545981092488 [color = "red", shape = record, style = "rounded", label = "{ \out  | UN_OP | { <left> left | <right> right }}"];
+	107545981092528 [color = "grey", shape = record, style = "rounded", label = "{ a | VAR |{ <left> left | <right> right }}"];
+	105827994174672 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	105827994174736 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	105827994174352 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	107545981092008 [color = "red", shape = record, style = "rounded", label = "{ main  | FUNC | { <left> left | <right> right }}"];
+	107545981092968 [color = "grey", shape = record, style = "rounded", label = "{ a | VAR |{ <left> left | <right> right }}"];
+	107545981093008 [color = "red", shape = record, style = "rounded", label = "{ \>  | BIN_OP | { <left> left | <right> right }}"];
+	107545981093048 [color = "green", shape = record, style = "rounded", label = "{ 0.000000 | NUM |{ <left> left | <right> right }}"];
+	107545981092888 [color = "red", shape = record, style = "rounded", label = "{ \if  | KEY_OP | { <left> left | <right> right }}"];
+	107545981093168 [color = "red", shape = record, style = "rounded", label = "{ ret  | UN_OP | { <left> left | <right> right }}"];
+	107545981093208 [color = "red", shape = record, style = "rounded", label = "{ \call  | UN_OP | { <left> left | <right> right }}"];
+	107545981093248 [color = "red", shape = record, style = "rounded", label = "{ Fact  | FUNC | { <left> left | <right> right }}"];
+	105827994174928 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	107545981093408 [color = "grey", shape = record, style = "rounded", label = "{ a | VAR |{ <left> left | <right> right }}"];
+	107545981093448 [color = "red", shape = record, style = "rounded", label = "{ \-  | BIN_OP | { <left> left | <right> right }}"];
+	107545981093488 [color = "green", shape = record, style = "rounded", label = "{ 1.000000 | NUM |{ <left> left | <right> right }}"];
+	107545981093368 [color = "red", shape = record, style = "rounded", label = "{ \said  | BIN_OP | { <left> left | <right> right }}"];
+	107545981093328 [color = "grey", shape = record, style = "rounded", label = "{ a | VAR |{ <left> left | <right> right }}"];
+	105827994174864 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	105827994174992 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	105827994175120 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	107545981093728 [color = "red", shape = record, style = "rounded", label = "{ ret  | UN_OP | { <left> left | <right> right }}"];
+	107545981093768 [color = "green", shape = record, style = "rounded", label = "{ 1.000000 | NUM |{ <left> left | <right> right }}"];
+	105827994175056 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	105827994175184 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	105827994175248 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	107545981092768 [color = "grey", shape = record, style = "rounded", label = "{ a | VAR |{ <left> left | <right> right }}"];
+	105827994174800 [color = "red", shape = record, style = "rounded", label = "{ \done  | PUNCT | { <left> left | <right> right }}"];
+	107545981092688 [color = "red", shape = record, style = "rounded", label = "{ Fact  | FUNC | { <left> left | <right> right }}"];
+	107545981092008:<left> -> 105827994174736[color = "green"]
+	105827994174736:<left> -> 105827994174416[color = "green"]
+	105827994174416:<left> -> 107545981092168[color = "green"]
+	107545981092168:<right> -> 107545981092208[color = "red"]
+	105827994174416:<right> -> 105827994174608[color = "red"]
+	105827994174608:<left> -> 107545981092248[color = "green"]
+	107545981092248:<right> -> 105827994174544[color = "red"]
+	105827994174544:<left> -> 107545981092288[color = "green"]
+	105827994174544:<right> -> 105827994174480[color = "red"]
+	105827994174480:<left> -> 107545981092368[color = "green"]
+	105827994174608:<right> -> 105827994174672[color = "red"]
+	105827994174672:<left> -> 107545981092488[color = "green"]
+	107545981092488:<right> -> 107545981092528[color = "red"]
+	105827994174736:<right> -> 105827994174352[color = "red"]
+	107545981092008:<right> -> 107545981092688[color = "red"]
+	107545981092688:<left> -> 105827994175248[color = "green"]
+	105827994175248:<left> -> 105827994175184[color = "green"]
+	105827994175184:<left> -> 107545981092888[color = "green"]
+	107545981092888:<left> -> 107545981093008[color = "green"]
+	107545981093008:<left> -> 107545981092968[color = "green"]
+	107545981093008:<right> -> 107545981093048[color = "red"]
+	107545981092888:<right> -> 105827994175120[color = "red"]
+	105827994175120:<left> -> 105827994174992[color = "green"]
+	105827994174992:<left> -> 107545981093168[color = "green"]
+	107545981093168:<right> -> 107545981093208[color = "red"]
+	107545981093208:<right> -> 105827994174928[color = "red"]
+	105827994174928:<left> -> 107545981093248[color = "green"]
+	105827994174928:<right> -> 105827994174864[color = "red"]
+	105827994174864:<left> -> 107545981093368[color = "green"]
+	107545981093368:<left> -> 107545981093448[color = "green"]
+	107545981093448:<left> -> 107545981093408[color = "green"]
+	107545981093448:<right> -> 107545981093488[color = "red"]
+	107545981093368:<right> -> 107545981093328[color = "red"]
+	105827994175120:<right> -> 105827994175056[color = "red"]
+	105827994175056:<left> -> 107545981093728[color = "green"]
+	107545981093728:<right> -> 107545981093768[color = "red"]
+	105827994175248:<right> -> 105827994174800[color = "red"]
+	105827994174800:<left> -> 107545981092768[color = "green"]
+	
+}

@@ -1,0 +1,18 @@
+def main ()
+{
+    in a
+    call Fact( a ) done
+
+    out a done
+}
+
+def Fact ( a )
+{
+    if ( a > 0 )
+    {
+        ret call Fact ( a said a - 1) done * a done
+    }
+    {
+        ret 1 done
+    }
+}

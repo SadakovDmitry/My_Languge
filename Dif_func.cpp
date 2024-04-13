@@ -55,31 +55,11 @@ void Delete_Node(struct Node** node)
 //                                                      END
 
 
-
+#define var(num) "var"#num
 
 
 //                                                  Create_Tree
 //------------------------------------------------------------------------------------------------------------------------------
-/*
-int Set_Priority(enum OPERATION op)
-{
-    switch(op)
-    {
-    //----------------------------------------------------------
-    #define OP(name, str, num_op, def, len, op_prior, ...)   \
-        case name:                                           \
-            return op_prior;
-    //----------------------------------------------------------
-
-    #include "operators.h"
-
-    default:
-        fprintf(stderr, "\n" red(NO_OPERATION)" in Print_in_Operation");
-    }
-
-    #undef OP
-}
-*/
 int Check_Operation(struct Node* node)
 {
     assert(node);
@@ -112,6 +92,8 @@ int Check_Operation(struct Node* node)
         fprintf(stderr, red(ERROR)" unkniwn type in\"" green(Check_Operation)"\"");
         exit(1);
     }
+
+    return 1;
 }
 
 struct Node* Create_Node(enum TYPE type, Tree_t value, struct Node* left_node, struct Node* right_node, struct Tree* tree)
@@ -122,23 +104,21 @@ struct Node* Create_Node(enum TYPE type, Tree_t value, struct Node* left_node, s
     new_node -> type  = type;
     new_node -> left  = left_node;
     new_node -> right = right_node;
-    //new_node -> prev  = prev_node;
-    /*
-    if(type == OP)
+
+    if(type == VAR)
     {
-        new_node -> priority = Set_Priority(value.op);
+        //fprintf(stderr, green(name) " : %s\n", (tree -> var_buf)[value.var_id].name);
+        (new_node -> val).var_id  = Add_Variable(tree, tree -> var_buf, (char*) (tree -> var_buf)[value.var_id].name);
+        //(new_node -> val).var_id  = Add_Variable(tree, tree -> var_buf, (char*) new_var[NOW_NUM_VAR]);
+        //NOW_NUM_VAR++;
     }
-    if(type == NUM)
+    if(type == FUNC)
     {
-        new_node -> priority = NUM_PRIORITY;
+        //fprintf(stderr, green(name) " : %s\n", (tree -> var_buf)[value.var_id].name);
+        (new_node -> val).var_id  = Add_Variable(tree, tree -> var_buf, (char*) (tree -> var_buf)[value.var_id].name);
+        //NOW_NUM_FUNC++;
     }
-    */
-     if(type == VAR)
-    {
-        //new_node -> priority = NUM_PRIORITY;
-        //printf( green(name) " : %s\n", value.name);
-        (new_node -> val).var_id = Add_Variable(tree, tree -> var_buf, value.name);
-    }
+
 
     return new_node;
 }
@@ -298,6 +278,9 @@ double Calculate_val(struct Node* node)
             exit(1);
         }
     }
+
+    return 0;
+
     #undef OP
 }
 
@@ -424,7 +407,7 @@ int Reduce_POW(struct Tree* tree, struct Node* node)
 }
 
 
-int Reduce_Node(struct Tree* tree, struct Node* node)
+int  Reduce_Node(struct Tree* tree, struct Node* node)
 {
     if(node)
     {

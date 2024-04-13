@@ -25,25 +25,22 @@
 #define SUB(left,right) Create_Node(BIN_OP, {.op = SUB},  left, right, tree)
 #define MUL(left,right) Create_Node(BIN_OP, {.op = MUL},  left, right, tree)
 #define DIV(left,right) Create_Node(BIN_OP, {.op = DIV},  left, right, tree)
-//#define TAN(right)      Create_Node(UN_OP , {.op = TAN},  NULL, right, tree)
-//#define COT(right)      Create_Node(UN_OP , {.op = COT},  NULL, right, tree)
 #define SIN(right)      Create_Node(UN_OP , {.op = SIN},  NULL, right, tree)
 #define COS(right)      Create_Node(UN_OP , {.op = COS},  NULL, right, tree)
 #define SQRT(right)     Create_Node(UN_OP , {.op = SQRT}, NULL, right, tree)
 #define POW(left,right) Create_Node(BIN_OP, {.op = POW},  left, right, tree)
-//#define LN(left,right) Create_Node(UN_OP, {.op = LOG},  left, right, tree)
 #define LN(right)       Create_Node(BIN_OP, {.op = LOG},  E   , right, tree)
+
+#define SET_RUS setlocale(LC_ALL, "Rus");
 
 const int SIZE_STR          = 100;
 const int INSERT_LEFT       = 1;
 const int INSERT_RIGHT      = -1;
 const int NUM_PRIORITY      = 3;
-const int MAX_LEN_EXP       = 5000;
 const int NUM_VAR           = 50;
 const int SIZE_PHRASE_BANK  = 16;
-const int MAX_NUM_REPLASES  = 25;
-const int SIZE_NODE_BUF     = 100;
-const int NUM_OF_KWD        = 32;
+const int SIZE_NODE_BUF     = 1000;
+const int NUM_OF_KWD        = 34;
 
 
 enum IND_START_TYPES
@@ -66,41 +63,13 @@ enum TYPE
     FUNC   = 6,
     STR    = 7,
     KWD    = 8
-    /*
-    NUM    = 0,
-    OP     = 1,
-    VAR    = 2,
-    KWD    = 3
-    */
 };
-/*
-enum LABEL_TYPE
-{
-    VAR  = 0,
-    KWD  = 1,
-    FUNC = 2,
-    STR  = 3
-};
-*/
-/*
-enum OPERATION
-{
-    //-----------------------------------
-    #define OP(name, str, num_op, ...)\
-        name   = num_op,
-    //-----------------------------------
-
-    #include "operators.h"
-    NO_VAL     = 222
-};
-*/
 
 enum KEY_OPERATIONS
 {
     IF    = 22,
     WHILE = 23,
-    //def   = 30,
-    //func  = 31
+    DEF   = 32
 };
 
 enum BIN_OPERATIONS
@@ -142,15 +111,19 @@ enum PUNCTUATION
     R_BRACKET = 27,
     L_FIG_BR  = 26,
     R_FIG_BR  = 25,
-    DOT_SUP   = 24
+    DOT_SUP   = 24,
+    COM       = 33
 };
 
-//const char operations[] = "ADD SUB MUL DIV SQRT";
-//const char operations[]     = " + - * / √ sin cos ^ ( ) if while <= >= == = !=";
-const char bin_operations[] = "+ - * / ^ < > <= >= == = != && || ";
-const char un_operations[]  = "sin cos √ in call ret out out_c ln ! ";
-const char key_operations[] = "if while def func ";
-const char punctuation[]    = " ; ( ) { } ";
+const char* const un_operations[]  = {"sin", "cos", "sqrt", "in", "call", "ret", "out", "outc", "ln", "!"};
+const char* const punctuation[]    = {"done", "(", ")", "{", "}", ","};
+const char* const key_operations[] = {"if", "is_very_brief_and_terse", "def"};
+const char* const bin_operations[] = {"+", "-", "*", "/", "^", "<", ">", "<=", ">=", "==" ,"said", "!=", "&&", "||"};
+
+const char* const new_var[] = {"a", "b", "c", "d", "e", "f", "g"};
+const char* const new_func[] = {"func_1", "func_2", "func_3", "func_4", "func_5", "func_6", "func_7", "func_8"};
+//int NOW_NUM_FUNC = 0;
+//int NOW_NUM_VAR  = 0;
 
 struct Tree
 {
@@ -171,6 +144,7 @@ union Value
     double num;
     char* name;
     int var_id;
+    int func_id;
 };
 
 struct Labels

@@ -1,0 +1,1 @@
+sin cos sqrt ln ! out outc in call ret + - * / ^ == > < >= <= != said if is_very_brief_and_terse done } { ) ( 0 && || def , main a Fact 
